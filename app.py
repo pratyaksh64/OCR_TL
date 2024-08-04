@@ -113,6 +113,28 @@ def search_applications():
         'data': result
     })
 
+@app.route("/delete-form", methods=['DELETE'])
+def delete_application():
+    value = request.args.get('number')
+    if not value:
+        return jsonify({ 'success': False, 'message': 'Invalid License Number'}), 400
+    handWrittenFormsCollection.delete_one({'number': value})
+    return jsonify({
+        'success': True,
+        'message': 'Deletion Successful'
+    })
+
+@app.route("/edit-form", methods=['PUT'])
+def edit_application():
+    value = request.args.get('number')
+    if not value:
+        return jsonify({ 'success': False, 'message': 'Invalid License Number'}), 400
+    data = request.get_json()
+    handWrittenFormsCollection.update_one({'number': value}, {'$set': data})
+    return jsonify(data)
+
+
+
 
 @app.route('/', methods=['GET'])
 def health_check():
@@ -120,4 +142,4 @@ def health_check():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=3001)
